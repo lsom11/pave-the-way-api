@@ -1,0 +1,205 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Pave the Way
+  license:
+    name: MIT
+servers:
+  - url: http://localhost:3000/v1
+  - url: http://api.pavetheway.com/v1
+paths:
+  /search:
+    get:
+      summary: Find a person
+      operationId: findPerson
+      tags:
+        - core
+      parameters:
+        - name: q
+          in: query
+          description: The search query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: offset
+          in: query
+          description: How many items to skip at one time (max 100)
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: limit
+          in: query
+          description: How many items to return at one time (max 100)
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '206':
+          description: A paged array of user data
+          headers:
+            x-next:
+              description: A link to the next page of responses
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/People"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /analyse:
+    post:
+      summary: Find all information about a person
+      operationId: analysePerson
+      tags:
+        - core
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PersonComplete"
+      responses:
+        '200':
+          description: The analysed information of a Person
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysedPerson"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Person:
+      type: object
+      required:
+        - profilePicture
+        - name
+        - position
+        - location
+        - link
+      properties:
+        profilePicture:
+          type: string
+          example: https://linkedin.com/in/person_name?picture
+        name:
+          type: string
+          example: Ash Ketchun
+        position:
+          type: string
+          example: Pokemon Master
+          
+    PersonComplete:
+      allOf:
+        - $ref: "#/components/schemas/Person"
+        - type: object
+          required:
+            - location
+            - link
+          properties:
+            location:
+              type: string
+              example: Pallet Town, Kanto
+            link:
+              type: string
+              format: url
+              example: https://linkedin.com/in/person_name
+
+    People:
+      type: array
+      items:
+        $ref: "#/components/schemas/PersonComplete"
+        
+    Links:
+      type: array
+      items:
+        type: object
+        properties:
+          linkedIn:
+            type: string
+            format: url
+            example: https://linkedin.com/in/person_name
+          twitter:
+            type: string
+            format: url
+            example: https://twitter.com/person_name
+          facebook:
+            type: string
+            format: url
+            example: https://facebook.com/person_name
+          google:
+            type: string
+            format: url
+            example: https://google.com?q=person_name
+            
+    Scores:
+      type: object
+      properties:
+        analytic:
+          type: integer
+          example: 25%
+        pragmatic:
+          type: integer
+          example: 25%
+        kind: 
+          type: integer
+          example: 25%
+        expressive: 
+          type: integer
+          example: 25%
+        
+    AnalysedPerson:
+      allOf:
+        - $ref: "#/components/schemas/Person"
+        - type: object
+          properties:
+            email:
+              type: string
+              format: mail
+              example: ash.ketchum@pkmcomp.com
+            company:
+              type: string
+              example: Pokemon League
+            city:
+              type: string
+              example: Palet Town
+            country:
+              type: string
+              example: Kanto
+            quote:
+              type: string
+              example: I wanna be the very best...Like no one ever was...
+            links:
+              $ref: "#/components/schemas/Links"
+            scores:
+              $ref: "#/components/schemas/Scores"
+            topics:
+              type: array
+              items:
+                type: string
+                example: Pikachu, Professor Oak, Mist Hentai
+                
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+          example: 201
+        message:
+          type: string
+          example: Unown
+          
