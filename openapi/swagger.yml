@@ -11,7 +11,7 @@ paths:
   /search:
     get:
       summary: Find a person
-      operationId: findPerson
+      operationId: controllers.search
       tags:
         - core
       parameters:
@@ -57,7 +57,7 @@ paths:
   /analyse:
     post:
       summary: Find all information about a person
-      operationId: analysePerson
+      operationId: controllers.analyse
       tags:
         - core
       requestBody:
