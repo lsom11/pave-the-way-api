@@ -1,3 +1,2 @@
 Flask==1.0.2
-BeautifulSoup==3.2.0
 virtualenv==16.7.5
