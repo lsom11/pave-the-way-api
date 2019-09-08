@@ -1,8 +1,14 @@
+import os
+
 class BaseConfig(object):
     """ Base config class. This fields will use by production and development server """
 
     ORIGINS = ["*"]  # for api calls
     SECRET_KEY = 'YOUR SECRET KEY'
+    BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'app.db')
+    DATABASE_CONNECT_OPTIONS = {}
+
 
 
 class Development(BaseConfig):

@@ -1,6 +1,5 @@
 from api import app
 
-
 config = {
     "development": "config.Development"
 }
